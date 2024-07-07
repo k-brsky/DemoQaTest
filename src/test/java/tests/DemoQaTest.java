@@ -4,11 +4,10 @@ package tests;
 import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selenide.*;
 
 public class DemoQaTest {
 
@@ -17,53 +16,52 @@ public class DemoQaTest {
         Configuration.browserSize = "1920x1080";
         Configuration.baseUrl = "https://demoqa.com";
         Configuration.pageLoadStrategy = "eager";
-        Configuration.holdBrowserOpen = true;
-        Configuration.timeout = 5000; // default 4000
+        Configuration.timeout = 5000;
     }
     @Test
     void fillFormTest() {
         open("/automation-practice-form");
+        executeJavaScript("$('#fixedban').remove()");
+        executeJavaScript("$('footer').remove()");
         $("#firstName").setValue("Kotik");
         $("#lastName").setValue("Begemotikov");
         $("#userEmail").setValue("kotik@begemotikov.com");
 
-        $(By.xpath("//label[@for='gender-radio-1']")).click();
+        $("#genterWrapper").$(byText("Male")).click();
 
         $("#userNumber").setValue("1234567890");
 
         $("#dateOfBirthInput").click();
-        $(".react-datepicker__month-select").click();
-        $(By.xpath("//select/option[@value=\"4\"]")).click();
-        $(".react-datepicker__year-select").click();
-        $(By.xpath("//select/option[@value=\"1990\"]")).click();
-        $(By.xpath("//div[@class=\"react-datepicker__day react-datepicker__day--010\"]")).click();
+        $(".react-datepicker__month-select").$(byText("May")).click();
+        $(".react-datepicker__year-select").$(byText("1990")).click();
+        $(".react-datepicker__month").$(byText("10")).click();
 
         $("#subjectsInput").setValue("C");
+        $(".subjects-auto-complete__menu-list").$(byText("Chemistry")).click();
 
-        $(By.xpath("//*[contains(text(), 'Chemistry')]")).click();
-
-        $(By.xpath("//label[@for='hobbies-checkbox-2']")).click();
+        $("#hobbiesWrapper").shouldHave(text("Reading")).click();
 
         $("#uploadPicture").uploadFromClasspath("1126.jpg");
 
         $("#currentAddress").setValue("ulitsa Kotikov, don Begemotikov");
 
-        $(By.xpath("//*[contains(text(), 'Select State')]")).click();
-        $(By.xpath("//*[contains(text(), 'Haryana')]")).click();
+        $("#stateCity-wrapper").$(byText("Select State")).click();
+        $("#stateCity-wrapper").$(byText("Haryana")).click();
 
-        $(By.xpath("//*[contains(text(), 'Select City')]")).click();
-        $(By.xpath("//*[contains(text(), 'Karnal')]")).click();
+        $("#stateCity-wrapper").$(byText("Select City")).click();
+        $("#stateCity-wrapper").$(byText("Karnal")).click();
+
         $("#submit").click();
 
-        $(By.xpath("//tbody/tr[1]")).shouldHave(text("Kotik Begemotikov"));
-        $(By.xpath("//tbody/tr[2]")).shouldHave(text("kotik@begemotikov.com"));
-        $(By.xpath("//tbody/tr[3]")).shouldHave(text("Male"));
-        $(By.xpath("//tbody/tr[4]")).shouldHave(text("1234567890"));
-        $(By.xpath("//tbody/tr[5]")).shouldHave(text("10 May,1990"));
-        $(By.xpath("//tbody/tr[6]")).shouldHave(text("Chemistry"));
-        $(By.xpath("//tbody/tr[7]")).shouldHave(text("Reading"));
-        $(By.xpath("//tbody/tr[8]")).shouldHave(text("1126.jpg"));
-        $(By.xpath("//tbody/tr[9]")).shouldHave(text("ulitsa Kotikov, don Begemotikov"));
-        $(By.xpath("//tbody/tr[10]")).shouldHave(text("Haryana Karnal"));
+        $(".table-responsive").shouldHave(text("Student Name Kotik Begemotikov"));
+        $(".table-responsive").shouldHave(text("Student Email kotik@begemotikov.com"));
+        $(".table-responsive").shouldHave(text("Gender Male"));
+        $(".table-responsive").shouldHave(text("Mobile 1234567890"));
+        $(".table-responsive").shouldHave(text("Date of Birth 10 May,1990"));
+        $(".table-responsive").shouldHave(text("Subjects Chemistry"));
+        $(".table-responsive").shouldHave(text("Hobbies Reading"));
+        $(".table-responsive").shouldHave(text("Picture 1126.jpg"));
+        $(".table-responsive").shouldHave(text("Address ulitsa Kotikov, don Begemotikov"));
+        $(".table-responsive").shouldHave(text("State and City Haryana Karnal"));
     }
 }
